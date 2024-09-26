@@ -9,6 +9,7 @@ WORKDIR /usr/app/speech2text-container
 COPY server.py ./
 
 #to install the dependencies
+
 RUN pip install -U openai-whisper
 
 EXPOSE 8000

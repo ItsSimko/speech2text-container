@@ -9,7 +9,7 @@ import os
 import tempfile
 
 # Initialize Whisper model
-model = whisper.load_model("medium")
+model = whisper.load_model("tiny")
 
 class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
