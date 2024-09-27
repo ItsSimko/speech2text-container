@@ -27,7 +27,7 @@ docker-compose up --build
 
 # Usage
 
-Send a Request: Send audio data to the exposed endpoint on http://localhost:8000/whisperaudio
+Send a Request: Send audio data to the exposed endpoint on http://localhost:2224/whisperaudio
 
 # License
 
