@@ -1,5 +1,4 @@
-# Copyright (c) 2023 Braedon Hendy
-# This software is released under the GNU General Public License v3.0
+# This software is released under the AGPL-3.0 license
 
 from torch._C import NoneType
 from fastapi import FastAPI, File, UploadFile, HTTPException
