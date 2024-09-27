@@ -28,6 +28,11 @@ docker-compose up --build
 # Usage
 
 Send a Request: Send audio data to the exposed endpoint on http://localhost:2224/whisperaudio
+Switches for the Python app:
+- --host : Host address to run the server on (Default: 0.0.0.0)
+- --port : Port number to run the server on (Default: 8000)
+- --whispermodel : Whisper model to use for transcription (Default: medium) (https://github.com/openai/whisper?tab=readme-ov-file#available-models-and-languages)
+
 
 # License
 
