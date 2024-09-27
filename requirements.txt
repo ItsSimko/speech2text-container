@@ -1,2 +1,6 @@
-openai-whisper==20231117
-
+openai-whisper
+fastapi
+uvicorn
+pydantic
+python-multipart
+argparse
