@@ -1,0 +1,14 @@
+services:
+  speech-container:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: speech-container
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "2224:2224"
+    environment:
+      - PORT=2224
+    command: ["python", "server.py", "--port", "2224"]
