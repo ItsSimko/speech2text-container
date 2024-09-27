@@ -1,19 +1,21 @@
-#Deriving the latest base image
-FROM python:3.10
+# Use the official Python image
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
 
-# Any working directory can be chosen as per choice like '/' or '/home' etc
-# i have chosen /usr/app/src
-WORKDIR /usr/app/speech2text-container
+# Set the working directory
+WORKDIR /app
 
-#to COPY the remote file at working directory in container
-COPY server.py ./
+# Copy the requirements file into the container
+COPY requirements.txt .
 
-#to install the dependencies
+# Install the required packages
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install -U openai-whisper
+# Copy the FastAPI application code into the container
+COPY ./requirements.txt .
+COPY ./server.py .
 
-EXPOSE 8000
+# Expose the port the app runs on
+EXPOSE 2224
 
-#CMD instruction should be used to run the software
-#contained by your image, along with any arguments.
-CMD [ "python", "./server.py"]
+# Command to run the FastAPI application
+CMD ["python", "server.py", "--port", "2224"]
