@@ -17,7 +17,12 @@ To build the Docker image, run the following command in the directory containing
 # Running the Docker Container
 
 ```bash
-docker run -p 8000:8000 speech2text-container
+docker run -p 2224:2224 speech2text-container
+```
+
+# Build and run
+```bash
+docker-compose up --build
 ```
 
 # Usage
