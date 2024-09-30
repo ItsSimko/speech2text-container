@@ -9,6 +9,22 @@ services:
       - .:/app
     ports:
       - "2224:2224"
+    networks:
+      - speech-network
     environment:
       - PORT=2224
     command: ["python", "server.py", "--port", "2224"]
+  caddy:
+    image: caddy:latest
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+    ports:
+      - 443:443
+    networks:
+      - speech-network
+    depends_on:
+      - speech-container
+
+networks:
+  speech-network:
+    driver: bridge

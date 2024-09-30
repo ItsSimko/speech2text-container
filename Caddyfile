@@ -1,0 +1,9 @@
+localhost:443 {
+    tls internal
+    reverse_proxy speech-container:2224
+}
+
+127.0.0.1:443 {
+    tls internal
+    reverse_proxy speech-container:2224
+}
