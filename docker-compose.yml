@@ -7,13 +7,9 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-    ports:
-      - "2224:2224"
     networks:
       - speech-network
-    environment:
-      - PORT=2224
-    command: ["python", "server.py", "--port", "2224"]
+    command: ["python", "server.py", "--port", "2224", "--whispermodel", "tiny"]
   caddy:
     image: caddy:latest
     volumes:
