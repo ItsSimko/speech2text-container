@@ -1,24 +1,40 @@
 # This software is released under the AGPL-3.0 license
 
 from torch._C import NoneType
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Security
+from fastapi.security import APIKeyHeader 
 from pydantic import BaseModel
 import whisper
 import uvicorn
 import os
 import tempfile
 import argparse
+import secrets
 
 # Initialize Whisper model
 model = NoneType
+sessionApiKey = NoneType
 
 app = FastAPI()
+api_key_header = APIKeyHeader(name="X-API-Key")
 
 class TranscriptionResponse(BaseModel):
     text: str
 
+def generate_api_key():
+    return secrets.token_urlsafe(32)
+
+def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
+    if api_key_header == sessionApiKey:
+        return api_key_header
+    raise HTTPException(
+        status_code=401,
+        detail="Invalid or missing API Key",
+    )
+
 @app.post("/whisperaudio", response_model=TranscriptionResponse)
-async def transcribe_audio(file: UploadFile = File(...)):
+async def transcribe_audio(file: UploadFile = File(...), api_key: str = Security(get_api_key)):
+    
     if file.content_type != "audio/mpeg" and file.content_type != "audio/wav":
         raise HTTPException(status_code=400, detail="Invalid content type. Please upload an audio file.")
 
@@ -63,5 +79,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model = whisper.load_model(args.whispermodel)
+    sessionApiKey = generate_api_key()
+
+    print(f"Use this API key for this session: {sessionApiKey}")
 
     uvicorn.run(app, host=args.host, port=args.port)
