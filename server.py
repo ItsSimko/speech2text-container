@@ -33,8 +33,18 @@ async def transcribe_audio(file: UploadFile = File(...)):
         result = model.transcribe(temp_file_path)
         response_data = {"text": result["text"]}
 
+    except OSError as e:
+        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
+    except IOError as e:
+        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
+    except AttributeError as e:
+        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
+    except TypeError as e:
+        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
+    except ValueError as e:
+        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Error processing audio file.")
+        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
 
     finally:
         # Clean up the temporary file
@@ -47,7 +57,7 @@ if __name__ == '__main__':
     # Command-line argument parsing
     parser = argparse.ArgumentParser(description="FastAPI server for Whisper audio transcription")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host address to run the server on")
-    parser.add_argument("--port", type=int, default=8000, help="Port number to run the server on")
+    parser.add_argument("--port", type=int, default=2224, help="Port number to run the server on")
     parser.add_argument("--whispermodel", type=str, default="medium", help="Whisper model to use for transcription (https://github.com/openai/whisper?tab=readme-ov-file#available-models-and-languages)")
 
     args = parser.parse_args()
