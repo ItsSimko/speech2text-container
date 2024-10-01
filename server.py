@@ -4,12 +4,15 @@ from torch._C import NoneType
 from fastapi import FastAPI, File, UploadFile, HTTPException, Security
 from fastapi.security import APIKeyHeader 
 from pydantic import BaseModel
+from dotenv import load_dotenv
 import whisper
 import uvicorn
 import os
 import tempfile
 import argparse
 import secrets
+
+load_dotenv()
 
 # Initialize Whisper model
 model = NoneType
@@ -31,6 +34,17 @@ def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
         status_code=401,
         detail="Invalid or missing API Key",
     )
+
+def check_api_key():
+    api_key = os.getenv('SESSION_API_KEY')
+
+    if not api_key:
+        # If not found, generate a new one and store it in the environment
+        api_key = generate_api_key()
+        with open(".env", "a") as f:
+            f.write(f"SESSION_API_KEY={api_key}\n")
+    
+    return api_key
 
 @app.post("/whisperaudio", response_model=TranscriptionResponse)
 async def transcribe_audio(file: UploadFile = File(...), api_key: str = Security(get_api_key)):
@@ -79,8 +93,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model = whisper.load_model(args.whispermodel)
-    sessionApiKey = generate_api_key()
+    sessionApiKey = check_api_key()
 
-    print(f"Use this API key for this session: {sessionApiKey}")
+    print(f"Use this API key for requests: {sessionApiKey}")
 
     uvicorn.run(app, host=args.host, port=args.port)
