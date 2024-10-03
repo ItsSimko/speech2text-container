@@ -23,3 +23,4 @@ EXPOSE 2224
 
 # Command to run the FastAPI application
 CMD ["python", "server.py", "--port", "2224"]
+        
