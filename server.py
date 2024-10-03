@@ -19,6 +19,7 @@ import os
 import tempfile
 import argparse
 import secrets
+import magic
 
 load_dotenv()
 
@@ -57,8 +58,13 @@ def check_api_key():
 @app.post("/whisperaudio", response_model=TranscriptionResponse)
 async def transcribe_audio(file: UploadFile = File(...), api_key: str = Security(get_api_key)):
     
-    if file.content_type != "audio/mpeg" and file.content_type != "audio/wav":
-        raise HTTPException(status_code=400, detail="Invalid content type. Please upload an audio file.")
+    # Check if the file is an audio file
+    mime = magic.Magic(mime=True)
+    file_content = await file.read()
+    file_type = mime.from_buffer(file_content)
+
+    if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
 
     # Save the audio file temporarily
     try:
