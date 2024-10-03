@@ -9,8 +9,8 @@
 # and Research Students - Software Developer Alex Simko, Pemba Sherpa (F24), and Naitik Patel.
 
 from torch._C import NoneType
-from fastapi import FastAPI, File, UploadFile, HTTPException, Security
-from fastapi.security import APIKeyHeader 
+from fastapi import FastAPI, File, UploadFile, HTTPException, Security, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials 
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import whisper
@@ -28,7 +28,7 @@ model = NoneType
 sessionApiKey = NoneType
 
 app = FastAPI()
-api_key_header = APIKeyHeader(name="X-API-Key")
+bearer_scheme = HTTPBearer()
 
 class TranscriptionResponse(BaseModel):
     text: str
@@ -36,22 +36,21 @@ class TranscriptionResponse(BaseModel):
 def generate_api_key():
     return secrets.token_urlsafe(32)
 
-def get_api_key(api_key_header: str = Security(api_key_header)) -> str:
-    if api_key_header == sessionApiKey:
-        return api_key_header
+def get_api_key(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme)) -> str:
+    token = credentials.credentials
+    if token == sessionApiKey:
+        return token
     raise HTTPException(
         status_code=401,
-        detail="Invalid or missing API Key",
+        detail="Invalid or missing Bearer Token",
     )
 
 def check_api_key():
     api_key = os.getenv('SESSION_API_KEY')
 
     if not api_key:
-        # If not found, generate a new one and store it in the environment
+        # If not found, generate a new one and every session
         api_key = generate_api_key()
-        with open(".env", "a") as f:
-            f.write(f"SESSION_API_KEY={api_key}\n")
     
     return api_key
 
