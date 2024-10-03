@@ -70,17 +70,6 @@ async def transcribe_audio(file: UploadFile = File(...), api_key: str = Security
         # Process the file with Whisper
         result = model.transcribe(temp_file_path)
         response_data = {"text": result["text"]}
-
-    except OSError as e:
-        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
-    except IOError as e:
-        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
-    except AttributeError as e:
-        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
-    except TypeError as e:
-        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
-    except ValueError as e:
-        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
 
