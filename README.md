@@ -38,7 +38,7 @@ Switches for the Python app:
 # Authentication
 
 On server start up you will receive a api key in the console. This key changes on each start up of the software.
-When making a request to the server in the headers include a key/value pair with key 'X-API-Key' and value 'You api key from console'.
+When making a request to the server in the headers include a key/value pair with key 'X-API-Key' and value 'Your API key.'.
 
 # License
 
