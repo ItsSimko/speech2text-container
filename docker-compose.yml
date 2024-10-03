@@ -15,7 +15,7 @@ services:
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile
     ports:
-      - 443:443
+      - 2224:2224
     networks:
       - speech-network
     depends_on:
