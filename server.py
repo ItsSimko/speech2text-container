@@ -9,10 +9,16 @@
 # and Research Students - Software Developer Alex Simko, Pemba Sherpa (F24), and Naitik Patel.
 
 from torch._C import NoneType
-from fastapi import FastAPI, File, UploadFile, HTTPException, Security
+from fastapi import FastAPI, File, UploadFile, HTTPException, Security, Request
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from utils import check_api_key, get_api_key, parse_arguments
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from fastapi.responses import PlainTextResponse
+from fastapi.exceptions import RequestValidationError
+from starlette.middleware.base import BaseHTTPMiddleware
 import whisper
 import uvicorn
 import os
@@ -32,16 +38,34 @@ logging.basicConfig(level=logging.INFO)
 # Initialize the Whisper model as NoneType
 model = NoneType
 
+# set a default rate limit of 5 requests per minute
+limiter = Limiter(key_func=get_remote_address, default_limits=["2/second"])  # Example: Limit to 5 requests per minute
+
+
 # Create a FastAPI application instance
 app = FastAPI()
+app.state.limiter = limiter
 
 # Define the response model for transcription
 class TranscriptionResponse(BaseModel):
     text: str
 
+# Add middleware for rate limiting
+@app.middleware("http")
+async def rate_limit_middleware(request, call_next):
+    try:
+        response = await call_next(request)
+        return response
+    except RateLimitExceeded as e:
+        logging.warning(f"Rate limit exceeded: {e}")
+        return PlainTextResponse("Rate limit exceeded. Try again later.", status_code=429)
+    
+
+
 # Define the endpoint for transcribing audio files
 @app.post("/whisperaudio", response_model=TranscriptionResponse)
-async def transcribe_audio(file: UploadFile = File(...), api_key: str = Security(get_api_key)):
+@limiter.limit("5/minute")
+async def transcribe_audio(request: Request, file: UploadFile = File(...), api_key: str = Security(get_api_key)):
     """
     Transcribes an uploaded audio file using the Whisper model.
 
