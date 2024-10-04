@@ -1,24 +1,31 @@
-services:
-  speech-container:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: speech-container
-    working_dir: /app
-    volumes:
-      - .:/app
-    networks:
-      - speech-network
-    command: ["python", "server.py", "--port", "2224", "--whispermodel", "tiny"]
-  caddy:
-    image: caddy:2.8.4
-    ports:
-      - 2224:443
-    networks:
-      - speech-network
-    depends_on:
-      - speech-container
+# Docker Compose configuration file for setting up a speech transcription service
 
+services:
+  # Service definition for the speech transcription container
+  speech-container:
+    # Build configuration for the container
+    build:
+      context: . # The build context is the current directory
+      dockerfile: Dockerfile # The Dockerfile to use for building the image
+    container_name: speech-container # Name of the container
+    working_dir: /app # Working directory inside the container
+    volumes:
+      - .:/app # Mount the current directory to /app inside the container
+    networks:
+      - speech-network # Connect the container to the 'speech-network' network
+    command: ["python", "server.py", "--port", "2224", "--whispermodel", "tiny"] # Command to run when the container starts
+
+  # Service definition for the Caddy reverse proxy
+  caddy:
+    image: caddy:2.8.4 # Use the Caddy image version 2.8.4
+    ports:
+      - 2224:443 # Map port 2224 on the host to port 443 on the container
+    networks:
+      - speech-network # Connect the container to the 'speech-network' network
+    depends_on:
+      - speech-container # Ensure the 'speech-container' service starts before this one
+
+# Network configuration
 networks:
   speech-network:
-    driver: bridge
+    driver: bridge # Use the bridge network driver
