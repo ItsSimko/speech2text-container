@@ -8,6 +8,7 @@ WORKDIR /app
 COPY ./requirements.txt .
 COPY ./server.py .
 COPY ./utils.py .
+copy ./.env ./.env
 
 # Install the required packages for python magic
 RUN apt-get update && apt-get install -y \
