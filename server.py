@@ -18,21 +18,70 @@ import uvicorn
 import os
 import tempfile
 import magic
+import logging
 
+# Load environment variables from a .env file
 load_dotenv()
+
+# Check and retrieve the API key
 sessionApiKey = check_api_key()
 
-# Initialize Whisper model
+# Configure logging to display INFO level messages
+logging.basicConfig(level=logging.INFO)
+
+# Initialize the Whisper model as NoneType
 model = NoneType
+
+# Create a FastAPI application instance
 app = FastAPI()
 
+# Define the response model for transcription
 class TranscriptionResponse(BaseModel):
     text: str
 
-
+# Define the endpoint for transcribing audio files
 @app.post("/whisperaudio", response_model=TranscriptionResponse)
 async def transcribe_audio(file: UploadFile = File(...), api_key: str = Security(get_api_key)):
-    
+    """
+    Transcribes an uploaded audio file using the Whisper model.
+
+    This endpoint accepts an audio file (MP3 or WAV) and an API key for authentication.
+    It validates the file type, saves the file temporarily, transcribes it using the
+    Whisper model, and returns the transcribed text.
+
+    Parameters:
+    -----------
+    file : UploadFile
+        The audio file to be transcribed. Must be an MP3 or WAV file.
+    api_key : str
+        The API key for authentication. Retrieved using the `get_api_key` function.
+
+    Returns:
+    --------
+    TranscriptionResponse
+        A JSON response containing the transcribed text.
+
+    Raises:
+    -------
+    HTTPException
+        - 400: If the uploaded file is not an MP3 or WAV file.
+        - 500: If there is an error processing the audio file.
+
+    Example:
+    --------
+    POST /whisperaudio
+    Content-Type: multipart/form-data
+    Authorization: Bearer <api_key>
+
+    {
+        "file": <audio_file>
+    }
+
+    Response:
+    {
+        "text": "Transcribed text from the audio file."
+    }
+    """
     # Check if the file is an audio file
     mime = magic.Magic(mime=True)
     file_content = await file.read()
@@ -52,6 +101,7 @@ async def transcribe_audio(file: UploadFile = File(...), api_key: str = Security
         result = model.transcribe(temp_file_path)
         response_data = {"text": result["text"]}
     except Exception as e:
+        logging.error(f"Error processing audio file: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
 
     finally:
@@ -61,14 +111,19 @@ async def transcribe_audio(file: UploadFile = File(...), api_key: str = Security
 
     return response_data
 
-
-
+# Main entry point for running the Whisper server
 if __name__ == '__main__':
+    # Parse command-line arguments
     args = parse_arguments()
 
+    # Load the Whisper model using the specified model name
     model = whisper.load_model(args.whispermodel)
+
+    # Check and retrieve the API key
     sessionApiKey = check_api_key()
 
+    # Print the API key for reference
     print(f"Use this API key for requests with bearer header: {sessionApiKey}")
 
+    # Run the Whiser server application using Uvicorn
     uvicorn.run(app, host=args.host, port=args.port)
