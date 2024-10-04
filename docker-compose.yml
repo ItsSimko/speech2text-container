@@ -11,11 +11,9 @@ services:
       - speech-network
     command: ["python", "server.py", "--port", "2224", "--whispermodel", "tiny"]
   caddy:
-    image: caddy:latest
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile
+    image: caddy:2.8.4
     ports:
-      - 2224:2224
+      - 2224:443
     networks:
       - speech-network
     depends_on:
