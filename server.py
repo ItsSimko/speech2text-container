@@ -35,7 +35,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler("Server.log"),
+        logging.FileHandler("/tmp/FreeScribe/Server.log"),
         logging.StreamHandler()  # This keeps logging in the console as well, if needed
     ]
 )
