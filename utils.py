@@ -8,7 +8,7 @@
 # Prof. Michael Yingbull (PI), Dr. Braedon Hendy (Partner), 
 # and Research Students - Software Developer Alex Simko, Pemba Sherpa (F24), and Naitik Patel.
 
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials 
 
 import os
@@ -131,3 +131,32 @@ def check_api_key():
         os.environ['SESSION_API_KEY'] = api_key
     
     return api_key
+
+def get_ip_from_headers(request: Request):
+    """
+    Extracts the client's IP address from the request headers.
+
+    If the `X-Forwarded-For` header is not present, it falls back to using
+    the direct client IP address from the request.
+
+    Parameters:
+    -----------
+    request : Request
+        The request object containing the headers and client info.
+
+    Returns:
+    --------
+    str
+        The client's IP address, either from the `X-Forwarded-For` header
+        or from `request.client.host`.
+
+    Example:
+    --------
+    >>> ip = get_ip_from_headers(request)
+    >>> print(ip)
+    '192.168.1.1'
+    """
+    forwarded_for = request.headers.get("X-Forwarded-For")
+    if forwarded_for:
+        return forwarded_for.split(",")[0]
+    return request.client.host

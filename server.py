@@ -12,7 +12,7 @@ from torch._C import NoneType
 from fastapi import FastAPI, File, UploadFile, HTTPException, Security, Request
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from utils import check_api_key, get_api_key, parse_arguments
+from utils import check_api_key, get_api_key, parse_arguments, get_ip_from_headers
 from slowapi import Limiter
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
@@ -39,7 +39,7 @@ logging.basicConfig(level=logging.INFO)
 model = NoneType
 
 # set a default rate limit of 5 requests per minute
-limiter = Limiter(key_func=get_remote_address, default_limits=["2/second"])  # Example: Limit to 5 requests per minute
+limiter = Limiter(key_func=get_ip_from_headers, default_limits=["1/second"])  # Example: Limit to 5 requests per minute
 
 
 # Create a FastAPI application instance
@@ -64,7 +64,7 @@ async def rate_limit_middleware(request, call_next):
 
 # Define the endpoint for transcribing audio files
 @app.post("/whisperaudio", response_model=TranscriptionResponse)
-@limiter.limit("5/minute")
+@limiter.limit("1/second")
 async def transcribe_audio(request: Request, file: UploadFile = File(...), api_key: str = Security(get_api_key)):
     """
     Transcribes an uploaded audio file using the Whisper model.
