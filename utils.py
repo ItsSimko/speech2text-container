@@ -33,10 +33,17 @@ def parse_arguments():
     >>> print(args.host, args.port, args.whispermodel)
     '0.0.0.0' 2224 'medium'
     """
+    # Define default values from environment variables
+    default_host = os.getenv("WHISPER_HOST", "0.0.0.0")
+    default_port = int(os.getenv("WHISPER_PORT", 2224))
+    default_whispermodel = os.getenv("WHISPER_MODEL", "medium")
+
+    # Create an argument parser
+    # These overwirte the env, if none passed rely on env/defaults
     parser = argparse.ArgumentParser(description="FastAPI server for Whisper audio transcription")
-    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host address to run the server on")
-    parser.add_argument("--port", type=int, default=2224, help="Port number to run the server on")
-    parser.add_argument("--whispermodel", type=str, default="medium", help="Whisper model to use for transcription")
+    parser.add_argument("--host", type=str, default=default_host, help="Host address to run the server on")
+    parser.add_argument("--port", type=int, default=default_port, help="Port number to run the server on")
+    parser.add_argument("--whispermodel", type=str, default=default_whispermodel, help="Whisper model to use for transcription")
     
     return parser.parse_args()
 

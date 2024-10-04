@@ -8,12 +8,13 @@ services:
       context: . # The build context is the current directory
       dockerfile: Dockerfile # The Dockerfile to use for building the image
     container_name: speech-container # Name of the container
-    working_dir: /app # Working directory inside the container
-    volumes:
-      - .:/app # Mount the current directory to /app inside the container
+    environment:
+      - WHISPER_MODEL=${WHISPER_MODEL:-medium} # Set the WHISPER_MODEL environment variable to 'tiny'
+      - WHISPER_PORT=${WHISPER_PORT:-2224} # Set the PORT environment variable to '2224'
+      - WHISPER_HOST=${WHISPER_HOST:-0.0.0.0} # Set the HOST environment variable to '
     networks:
       - speech-network # Connect the container to the 'speech-network' network
-    command: ["python", "server.py", "--port", "2224", "--whispermodel", "tiny"] # Command to run when the container starts
+    command: ["python", "server.py"] # Command to run when the container starts
 
   # Service definition for the Caddy reverse proxy
   caddy:
@@ -22,7 +23,7 @@ services:
       context: .
       dockerfile: Dockerfile.caddy
     ports:
-      - 2224:443 # Map port 2224 on the host to port 443 on the container
+      - ${WHISPER_PORT:-2224}:2224 # Map port 2224 on the host to port 443 on the container
     networks:
       - speech-network # Connect the container to the 'speech-network' network
     depends_on:
