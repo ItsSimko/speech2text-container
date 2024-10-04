@@ -8,7 +8,6 @@ WORKDIR /app
 COPY ./requirements.txt .
 COPY ./server.py .
 COPY ./utils.py .
-COPY ./Caddyfile /etc/caddy/Caddyfile
 
 # Install the required packages for python magic
 RUN apt-get update && apt-get install -y \

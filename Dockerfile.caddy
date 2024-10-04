@@ -1,0 +1,5 @@
+# Use the official Caddy image as the base image
+FROM caddy:2.8.4
+
+# Copy the Caddyfile from the host to the container
+COPY Caddyfile /etc/caddy/Caddyfile
