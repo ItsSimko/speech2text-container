@@ -25,9 +25,20 @@ import os
 import tempfile
 import magic
 import logging
+import logging
 
 # Load environment variables from a .env file
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("Server.log"),
+        logging.StreamHandler()  # This keeps logging in the console as well, if needed
+    ]
+)
 
 # Check and retrieve the API key
 sessionApiKey = check_api_key()
@@ -112,6 +123,7 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
     file_type = mime.from_buffer(file_content)
 
     if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
+        logging.warning(f"Invalid file type: {file_type}")
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
 
     # Save the audio file temporarily
