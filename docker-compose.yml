@@ -10,11 +10,12 @@ services:
     container_name: speech-container # Name of the container
     environment:
       - WHISPER_MODEL=${WHISPER_MODEL:-medium} # Set the WHISPER_MODEL environment variable to 'tiny'
-      - WHISPER_PORT=${WHISPER_PORT:-2224} # Set the PORT environment variable to '2224'
+      - WHISPER_PORT=2224 # Set the PORT environment variable to '2224'
       - WHISPER_HOST=${WHISPER_HOST:-0.0.0.0} # Set the HOST environment variable to '
     networks:
       - speech-network # Connect the container to the 'speech-network' network
     command: ["python", "server.py"] # Command to run when the container starts
+    restart: on-failure # Restart policy on failure
 
   # Service definition for the Caddy reverse proxy
   caddy:
@@ -28,6 +29,7 @@ services:
       - speech-network # Connect the container to the 'speech-network' network
     depends_on:
       - speech-container # Ensure the 'speech-container' service starts before this one
+    restart: on-failure # Restart policy on failure
 
 # Network configuration
 networks:
