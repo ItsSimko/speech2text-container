@@ -13,12 +13,6 @@ COPY ./requirements.txt .
 # Install the required packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-
-# copy the rest of the directory into the container
-COPY ./server.py .
-COPY ./utils.py .
-COPY ./.env ./.env
-
 # Install the required packages for python magic
 RUN apt-get update && apt-get install -y \
     libmagic1 \
@@ -27,6 +21,11 @@ RUN apt-get update && apt-get install -y \
 
 # Install ffmpeg required for whisper transcription
 RUN apt-get install ffmpeg -y
+
+# copy the rest of the directory into the container
+COPY ./server.py .
+COPY ./utils.py .
+COPY ./.env ./.env
 
 # Expose the port the app runs on
 EXPOSE 2224
