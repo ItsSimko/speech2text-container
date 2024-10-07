@@ -7,3 +7,4 @@ argparse
 python-dotenv
 python-magic
 slowapi
+librosa

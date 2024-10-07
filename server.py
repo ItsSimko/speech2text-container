@@ -27,6 +27,7 @@ import magic
 import logging
 import logging
 import io
+import librosa
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -115,21 +116,22 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
     }
     """
     try:
-        with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
-            # Check if the file is an audio file
-            mime = magic.Magic(mime=True)
-            file_content = await file.read()
-            file_type = mime.from_buffer(file_content)
+        # Check if the file is an audio file
+        mime = magic.Magic(mime=True)
+        file_content = await file.read()  # Assuming 'file' is a File object from an upload
+        file_type = mime.from_buffer(file_content)
 
-            if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
-                logging.warning(f"Invalid file type: {file_type}")
-                raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
+        if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
+            logging.warning(f"Invalid file type: {file_type}")
+            raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
 
-            temp_audio_file.write(file_content)
-            temp_file_path = temp_audio_file.name
+        # Use BytesIO to create an in-memory buffer for the audio file
+        audio_buffer = io.BytesIO(file_content)
 
-        # Process the file with Whisper
-        result = model.transcribe(temp_file_path)
+        audio_data, sample_rate = librosa.load(audio_buffer, sr=None)  # sr=None to keep the original sample rate
+
+        # Process the file with Whisper using the in-memory buffer
+        result = model.transcribe(audio_data)  # Assuming 'model' can handle file-like objects
         response_data = {"text": result["text"]}
     except Exception as e:
         logging.error(f"Error processing audio file: {e}")
@@ -137,7 +139,7 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
 
     return response_data
 
-# Main entry point for running the Whisper server
+# Main entry point for running the Whisper servers
 if __name__ == '__main__':
     # Parse command-line arguments
     args = parse_arguments()
