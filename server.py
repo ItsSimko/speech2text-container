@@ -165,7 +165,8 @@ async def startup_event():
     global MODEL
     MODEL = whisper.load_model(args["whispermodel"]) 
 
-    # Check and retrieve the API key
+    # Check and retrieve the API key\
+    global SESSION_API_KEY
     SESSION_API_KEY = check_api_key()
 
     # Print the API key for reference
