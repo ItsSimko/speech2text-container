@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Unburdening Primary Healthcare &#8212; speech2text  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=c058f7c8" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="speech2text-container" href="source/modules.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="unburdening-primary-healthcare">
+<h1>Unburdening Primary Healthcare<a class="headerlink" href="#unburdening-primary-healthcare" title="Link to this heading">¶</a></h1>
+<p>Welcome to the <strong>Unburdening Primary Healthcare: An Open-Source AI Clinician Partner Platform</strong> documentation. This project is a collaboration as part of the ClinicianFOCUS initiative with Conestoga College and Dr. Braedon Hendy. Below you’ll find documentation for the core modules, API endpoints, and utilities used in this project. Below are the pages contents:</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#installation" id="id1">Installation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#prerequisites" id="id2">Prerequisites</a></p></li>
+<li><p><a class="reference internal" href="#installation-steps" id="id3">Installation Steps</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#usage" id="id4">Usage</a></p></li>
+<li><p><a class="reference internal" href="#api-reference" id="id5">API Reference</a></p>
+<ul>
+<li><p><a class="reference internal" href="#whisper-audio-endpoint" id="id6">Whisper Audio Endpoint</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#python-modules" id="id7">Python Modules</a></p></li>
+</ul>
+</nav>
+<section id="installation">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Installation</a><a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<p>To install and run the <strong>speech2text-container</strong> project with the latest changes, follow these instructions:</p>
+<section id="prerequisites">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink">Prerequisites</a><a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p><strong>Docker</strong> and <strong>Docker Compose</strong> must be installed on your system.</p></li>
+</ul>
+</section>
+<section id="installation-steps">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Installation Steps</a><a class="headerlink" href="#installation-steps" title="Link to this heading">¶</a></h3>
+<ol class="arabic">
+<li><p><strong>Clone the Repository</strong>:</p>
+<p>First, clone the project repository by running the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ClinicianFOCUS/speech2text-container.git
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="usage">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Usage</a><a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>To deploy and run the speech transcription service using Docker Compose, follow the steps below.</p>
+<ol class="arabic">
+<li><p><strong>Build and run the services using Docker Compose</strong>:</p>
+<p>The project includes a <cite>docker-compose.yml</cite> file to simplify the setup of the speech transcription service. This file defines two services:
+- <cite>speech-container</cite> for the Whisper speech transcription model.
+- <cite>caddy</cite> for handling reverse proxy duties.</p>
+</li>
+<li><p><strong>Prerequisites</strong>:
+- Install Docker and Docker Compose on your system.
+- Ensure that the necessary ports (default: 2224) are available on your machine.</p></li>
+<li><p><strong>Starting the Services</strong>:</p>
+<p>Run the following command to build and start the containers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose<span class="w"> </span>up<span class="w"> </span>--build
+</pre></div>
+</div>
+<p>This will:
+- Build the <cite>speech-container</cite> using the provided <cite>Dockerfile</cite> and start it with the specified <cite>WHISPER_MODEL</cite>, <cite>WHISPER_PORT</cite>, and <cite>WHISPER_HOST</cite>.
+- Build and run the <cite>caddy</cite> container as a reverse proxy.</p>
+</li>
+<li><p><strong>Service Configuration</strong>:</p>
+<p>The following environment variables can be customized to control the behavior of the <cite>speech-container</cite> service:</p>
+<ul class="simple">
+<li><p><cite>WHISPER_MODEL</cite>: The Whisper model to use (default: <cite>medium</cite>).</p></li>
+<li><p><cite>WHISPER_PORT</cite>: The port to expose the service (default: <cite>2224</cite>).</p></li>
+<li><p><cite>WHISPER_HOST</cite>: The host to bind the service (default: <cite>0.0.0.0</cite>).</p></li>
+<li><p><cite>UVICORN_WORKERS</cite>: Number of Uvicorn workers (default: <cite>1</cite>).</p></li>
+</ul>
+<p><strong>Example</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">WHISPER_MODEL</span><span class="o">=</span>large<span class="w"> </span><span class="nv">WHISPER_PORT</span><span class="o">=</span><span class="m">8080</span><span class="w"> </span><span class="nv">WHISPER_HOST</span><span class="o">=</span><span class="m">127</span>.0.0.1<span class="w"> </span>docker-compose<span class="w"> </span>up<span class="w"> </span>--build
+</pre></div>
+</div>
+<p>This will start the transcription service with the <cite>large</cite> Whisper model on port <cite>8080</cite>, accessible only from <cite>127.0.0.1</cite>.</p>
+</li>
+<li><p><strong>Stopping the Services</strong>:</p>
+<p>To stop the services, use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker-compose<span class="w"> </span>down
+</pre></div>
+</div>
+<p>This will stop and remove the containers but will retain the built images.</p>
+</li>
+</ol>
+</section>
+<section id="api-reference">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">API Reference</a><a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h2>
+<p>Below are the available API endpoints for interacting with the Whisper Server.</p>
+<section id="whisper-audio-endpoint">
+<span id="whisperaudio"></span><h3><a class="toc-backref" href="#id6" role="doc-backlink">Whisper Audio Endpoint</a><a class="headerlink" href="#whisper-audio-endpoint" title="Link to this heading">¶</a></h3>
+<p><strong>URL</strong>: <code class="docutils literal notranslate"><span class="pre">/whisperaudio</span></code></p>
+<p><strong>Method</strong>: <code class="docutils literal notranslate"><span class="pre">POST</span></code></p>
+<p><strong>Description</strong>:
+This endpoint accepts an audio file (MP3 or WAV) and transcribes it using the Whisper model. Ensure that an API key is provided via the Authorization Bearer header.</p>
+<dl class="simple">
+<dt><strong>Parameters</strong>:</dt><dd><ul class="simple">
+<li><p><strong>file</strong> (required): The audio file (MP3 or WAV).</p></li>
+<li><p><strong>api_key</strong> (required): A valid API key for accessing the endpoint.</p></li>
+</ul>
+</dd>
+<dt><strong>Response</strong>:</dt><dd><ul class="simple">
+<li><p>200: Transcription text in a JSON format.</p></li>
+<li><p>400: Invalid file type.</p></li>
+<li><p>401: Unauthorized.</p></li>
+<li><p>413: Request entity too large.</p></li>
+<li><p>419: Rate limit exceeded.</p></li>
+<li><p>500: Server error.</p></li>
+</ul>
+</dd>
+</dl>
+<p><strong>Example</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="s2">&quot;http://localhost:8000/whisperaudio&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer &lt;api_key&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-F<span class="w"> </span><span class="s2">&quot;file=@/path/to/audiofile.wav&quot;</span>
+</pre></div>
+</div>
+<p>Response:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;text&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Transcribed text here&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="python-modules">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Python Modules</a><a class="headerlink" href="#python-modules" title="Link to this heading">¶</a></h2>
+<p>Below are the core Python modules used in this project.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="source/modules.html">speech2text-container</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source/server.html">server module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="source/utils.html">utils module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">speech2text</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="source/modules.html">speech2text-container</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="source/modules.html" title="next chapter">speech2text-container</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, ClinicianFOCUS.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.0.2</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
