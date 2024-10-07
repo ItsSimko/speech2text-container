@@ -4,3 +4,7 @@ uvicorn
 pydantic
 python-multipart
 argparse
+python-dotenv
+python-magic
+slowapi
+librosa

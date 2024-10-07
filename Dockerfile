@@ -1,21 +1,32 @@
 # Use the official Python image
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.10
+FROM python:3.10-slim
 
 # Set the working directory
 WORKDIR /app
 
-# Copy the requirements file into the container
-COPY requirements.txt .
+#setup dir we will need and set non root user perms
+RUN mkdir -p /.cache && chown -R 1000:1000 /.cache
+
+# Copy the Speech2text server code into the container
+COPY ./requirements.txt .
 
 # Install the required packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the FastAPI application code into the container
-COPY ./requirements.txt .
+# Install the required packages for python magic
+RUN apt-get update && apt-get install -y \
+    libmagic1 \
+    && apt-get clean
+
+
+# Install ffmpeg required for whisper transcription
+RUN apt-get install ffmpeg -y
+
+# copy the rest of the directory into the container
 COPY ./server.py .
+COPY ./utils.py .
+COPY ./.env ./.env
 
 # Expose the port the app runs on
 EXPOSE 2224
-
-# Command to run the FastAPI application
-CMD ["python", "server.py", "--port", "2224"]
+        
