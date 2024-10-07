@@ -20,6 +20,8 @@ git clone https://github.com/ClinicianFOCUS/speech2text-container.git
 cd speech2text-container
 ```
 
+- Recommended Step: Set a API key in the .env file. this will be the key used to access the API. If this step is skipped the container wil generate a random key for you upon each start.
+
 3. Build and run the docker images using docker-compose
 
 ```bash
@@ -57,7 +59,8 @@ This will start the transcription service with the `large` Whisper model on port
 # Authentication
 
 On server start up you will receive a api key in the console. This key changes on each start up of the software.
-When making a request to the server include a bearer header with the api key.
+
+You can set your own API key in the .env. This will be your authentication key when launched in the container.
 
 # Example request
 
