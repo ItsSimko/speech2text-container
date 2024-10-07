@@ -39,7 +39,7 @@ def parse_arguments():
 
 
     # Define default values from environment variables
-    host = os.getenv("WHISPER_HOST", "0.0.0.0")  # Retrieve the host from the environment, defaulting to "0.0.0.0"
+    host = os.getenv("WHISPER_HOST", "127.0.0.1")  # Retrieve the host from the environment, defaulting to "0.0.0.0"
     port = int(os.getenv("WHISPER_PORT", 2224))  # Retrieve the port from the environment, defaulting to 2224, and convert to integer
     whispermodel = os.getenv("WHISPER_MODEL", "medium")  # Retrieve the model name from the environment, defaulting to "medium"
     
