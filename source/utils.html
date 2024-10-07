@@ -32,8 +32,142 @@
 
           <div class="body" role="main">
             
-  <section id="utils-module">
-<h1>utils module<a class="headerlink" href="#utils-module" title="Link to this heading">¶</a></h1>
+  <section id="module-utils">
+<span id="utils-module"></span><h1>utils module<a class="headerlink" href="#module-utils" title="Link to this heading">¶</a></h1>
+<p>This software is released under the AGPL-3.0 license
+Copyright (c) 2023-2024 Braedon Hendy</p>
+<p>Further updates and packaging added in 2024 through the ClinicianFOCUS initiative,
+a collaboration with Dr. Braedon Hendy and Conestoga College Institute of Applied
+Learning and Technology as part of the CNERG+ applied research project,
+Unburdening Primary Healthcare: An Open-Source AI Clinician Partner Platform”.
+Prof. Michael Yingbull (PI), Dr. Braedon Hendy (Partner),
+and Research Students - Software Developer Alex Simko, Pemba Sherpa (F24), and Naitik Patel.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.check_api_key">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">check_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#check_api_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.check_api_key" title="Link to this definition">¶</a></dt>
+<dd><p>Checks and retrieves the API key from the environment variables.</p>
+<p>This function checks if the <code class="docutils literal notranslate"><span class="pre">SESSION_API_KEY</span></code> environment variable is set.
+If not, it generates a new API key and sets it in the environment variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The API key stored in the environment variables.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api_key</span> <span class="o">=</span> <span class="n">check_api_key</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
+<span class="go">&#39;aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.generate_api_key">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">generate_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#generate_api_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.generate_api_key" title="Link to this definition">¶</a></dt>
+<dd><p>Generates a secure API key.</p>
+<p>This function uses the <cite>secrets</cite> module to generate a secure, URL-safe
+API key. The key is 32 characters long.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A securely generated API key.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api_key</span> <span class="o">=</span> <span class="n">generate_api_key</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
+<span class="go">&#39;aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.get_api_key">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">get_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credentials</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">fastapi.security.HTTPAuthorizationCredentials</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">fastapi.Depends</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../_modules/utils.html#get_api_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.get_api_key" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieves and validates the API key from the request headers.</p>
+<p>This function retrieves the API key from the request headers using the
+<cite>HTTPBearer</cite> scheme. It checks if the provided token matches the one stored
+in the environment variable <code class="docutils literal notranslate"><span class="pre">SESSION_API_KEY</span></code>. If the token is invalid or
+missing, it raises an HTTPException with a 401 status code.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>credentials</strong> (<em>HTTPAuthorizationCredentials</em>) – The credentials extracted from the request headers.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The validated API key.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>HTTPException</strong> – <ul class="simple">
+<li><p>401: If the provided token is invalid or missing.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">api_key</span> <span class="o">=</span> <span class="n">get_api_key</span><span class="p">(</span><span class="n">credentials</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
+<span class="go">&#39;aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.get_ip_from_headers">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">get_ip_from_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">fastapi.Request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#get_ip_from_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.get_ip_from_headers" title="Link to this definition">¶</a></dt>
+<dd><p>Extracts the client’s IP address from the request headers.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">X-Forwarded-For</span></code> header is not present, it falls back to using
+the direct client IP address from the request.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>Request</em>) – The request object containing the headers and client info.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The client’s IP address, either from the <code class="docutils literal notranslate"><span class="pre">X-Forwarded-For</span></code> header
+or from <code class="docutils literal notranslate"><span class="pre">request.client.host</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ip</span> <span class="o">=</span> <span class="n">get_ip_from_headers</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+<span class="go">&#39;192.168.1.1&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.parse_arguments">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">parse_arguments</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/utils.html#parse_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#utils.parse_arguments" title="Link to this definition">¶</a></dt>
+<dd><p>Parses and returns configuration arguments for the application from environment variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the parsed configuration values with keys:
+- <code class="docutils literal notranslate"><span class="pre">host</span></code>: The hostname or IP address.
+- <code class="docutils literal notranslate"><span class="pre">port</span></code>: The port number.
+- <code class="docutils literal notranslate"><span class="pre">whispermodel</span></code>: The name of the Whisper model.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+<p><strong>Environment Variables:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">WHISPER_HOST</span></code>: The hostname or IP address on which the application should listen. Default: <code class="docutils literal notranslate"><span class="pre">&quot;0.0.0.0&quot;</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WHISPER_PORT</span></code>: The port number on which the application should listen. Default: <code class="docutils literal notranslate"><span class="pre">2224</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">WHISPER_MODEL</span></code>: The name of the Whisper model to be used. Default: <code class="docutils literal notranslate"><span class="pre">&quot;medium&quot;</span></code>.</p></li>
+</ul>
+</dd></dl>
+
 </section>
 
 

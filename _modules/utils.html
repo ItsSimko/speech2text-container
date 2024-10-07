@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>utils &#8212; speech2text  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=c058f7c8" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This software is released under the AGPL-3.0 license</span>
+<span class="sd">Copyright (c) 2023-2024 Braedon Hendy</span>
+
+<span class="sd">Further updates and packaging added in 2024 through the ClinicianFOCUS initiative, </span>
+<span class="sd">a collaboration with Dr. Braedon Hendy and Conestoga College Institute of Applied </span>
+<span class="sd">Learning and Technology as part of the CNERG+ applied research project, </span>
+<span class="sd">Unburdening Primary Healthcare: An Open-Source AI Clinician Partner Platform&quot;. </span>
+<span class="sd">Prof. Michael Yingbull (PI), Dr. Braedon Hendy (Partner), </span>
+<span class="sd">and Research Students - Software Developer Alex Simko, Pemba Sherpa (F24), and Naitik Patel.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">Request</span>
+<span class="kn">from</span> <span class="nn">fastapi.security</span> <span class="kn">import</span> <span class="n">HTTPBearer</span><span class="p">,</span> <span class="n">HTTPAuthorizationCredentials</span> 
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">secrets</span>
+
+<span class="c1"># Initialize the HTTP Bearer scheme for token authentication</span>
+<span class="n">bearer_scheme</span> <span class="o">=</span> <span class="n">HTTPBearer</span><span class="p">()</span>
+
+<div class="viewcode-block" id="parse_arguments">
+<a class="viewcode-back" href="../source/utils.html#utils.parse_arguments">[docs]</a>
+<span class="k">def</span> <span class="nf">parse_arguments</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parses and returns configuration arguments for the application from environment variables.</span>
+
+<span class="sd">    :return: A dictionary containing the parsed configuration values with keys:</span>
+<span class="sd">             - ``host``: The hostname or IP address.</span>
+<span class="sd">             - ``port``: The port number.</span>
+<span class="sd">             - ``whispermodel``: The name of the Whisper model.</span>
+<span class="sd">    :rtype: dict</span>
+
+<span class="sd">    **Environment Variables:**</span>
+
+<span class="sd">    - ``WHISPER_HOST``: The hostname or IP address on which the application should listen. Default: ``&quot;0.0.0.0&quot;``.</span>
+<span class="sd">    - ``WHISPER_PORT``: The port number on which the application should listen. Default: ``2224``.</span>
+<span class="sd">    - ``WHISPER_MODEL``: The name of the Whisper model to be used. Default: ``&quot;medium&quot;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="c1"># Define default values from environment variables</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;WHISPER_HOST&quot;</span><span class="p">,</span> <span class="s2">&quot;127.0.0.1&quot;</span><span class="p">)</span>  <span class="c1"># Retrieve the host from the environment, defaulting to &quot;0.0.0.0&quot;</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;WHISPER_PORT&quot;</span><span class="p">,</span> <span class="mi">2224</span><span class="p">))</span>  <span class="c1"># Retrieve the port from the environment, defaulting to 2224, and convert to integer</span>
+    <span class="n">whispermodel</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;WHISPER_MODEL&quot;</span><span class="p">,</span> <span class="s2">&quot;medium&quot;</span><span class="p">)</span>  <span class="c1"># Retrieve the model name from the environment, defaulting to &quot;medium&quot;</span>
+    
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;host&quot;</span><span class="p">:</span> <span class="n">host</span><span class="p">,</span> <span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="n">port</span><span class="p">,</span> <span class="s2">&quot;whispermodel&quot;</span><span class="p">:</span> <span class="n">whispermodel</span><span class="p">}</span>  <span class="c1"># Return the parsed configuration as a dictionary</span></div>
+
+
+<div class="viewcode-block" id="generate_api_key">
+<a class="viewcode-back" href="../source/utils.html#utils.generate_api_key">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_api_key</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a secure API key.</span>
+
+<span class="sd">    This function uses the `secrets` module to generate a secure, URL-safe</span>
+<span class="sd">    API key. The key is 32 characters long.</span>
+
+<span class="sd">    :return: A securely generated API key.</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    **Example:**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &gt;&gt;&gt; api_key = generate_api_key()</span>
+<span class="sd">        &gt;&gt;&gt; print(api_key)</span>
+<span class="sd">        &#39;aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">secrets</span><span class="o">.</span><span class="n">token_urlsafe</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_api_key">
+<a class="viewcode-back" href="../source/utils.html#utils.get_api_key">[docs]</a>
+<span class="k">def</span> <span class="nf">get_api_key</span><span class="p">(</span><span class="n">credentials</span><span class="p">:</span> <span class="n">HTTPAuthorizationCredentials</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">bearer_scheme</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieves and validates the API key from the request headers.</span>
+
+<span class="sd">    This function retrieves the API key from the request headers using the</span>
+<span class="sd">    `HTTPBearer` scheme. It checks if the provided token matches the one stored</span>
+<span class="sd">    in the environment variable ``SESSION_API_KEY``. If the token is invalid or</span>
+<span class="sd">    missing, it raises an HTTPException with a 401 status code.</span>
+
+<span class="sd">    :param credentials: The credentials extracted from the request headers.</span>
+<span class="sd">    :type credentials: HTTPAuthorizationCredentials</span>
+
+<span class="sd">    :return: The validated API key.</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    :raises HTTPException:</span>
+<span class="sd">        - 401: If the provided token is invalid or missing.</span>
+
+<span class="sd">    **Example:**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &gt;&gt;&gt; api_key = get_api_key(credentials)</span>
+<span class="sd">        &gt;&gt;&gt; print(api_key)</span>
+<span class="sd">        &#39;aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">token</span> <span class="o">=</span> <span class="n">credentials</span><span class="o">.</span><span class="n">credentials</span>
+    <span class="k">if</span> <span class="n">token</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;SESSION_API_KEY&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">token</span>
+    <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+        <span class="n">status_code</span><span class="o">=</span><span class="mi">401</span><span class="p">,</span>
+        <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Invalid or missing Bearer Token&quot;</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_api_key">
+<a class="viewcode-back" href="../source/utils.html#utils.check_api_key">[docs]</a>
+<span class="k">def</span> <span class="nf">check_api_key</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks and retrieves the API key from the environment variables.</span>
+
+<span class="sd">    This function checks if the ``SESSION_API_KEY`` environment variable is set.</span>
+<span class="sd">    If not, it generates a new API key and sets it in the environment variables.</span>
+
+<span class="sd">    :return: The API key stored in the environment variables.</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    **Example:**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &gt;&gt;&gt; api_key = check_api_key()</span>
+<span class="sd">        &gt;&gt;&gt; print(api_key)</span>
+<span class="sd">        &#39;aBcDeFgHiJkLmNoPqRsTuVwXyZ1234567890&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;SESSION_API_KEY&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">api_key</span><span class="p">:</span>
+        <span class="c1"># If not found, generate a new one and every session</span>
+        <span class="n">api_key</span> <span class="o">=</span> <span class="n">generate_api_key</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SESSION_API_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">api_key</span>
+    
+    <span class="k">return</span> <span class="n">api_key</span></div>
+
+
+<div class="viewcode-block" id="get_ip_from_headers">
+<a class="viewcode-back" href="../source/utils.html#utils.get_ip_from_headers">[docs]</a>
+<span class="k">def</span> <span class="nf">get_ip_from_headers</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts the client&#39;s IP address from the request headers.</span>
+
+<span class="sd">    If the ``X-Forwarded-For`` header is not present, it falls back to using</span>
+<span class="sd">    the direct client IP address from the request.</span>
+
+<span class="sd">    :param request: The request object containing the headers and client info.</span>
+<span class="sd">    :type request: Request</span>
+
+<span class="sd">    :return: The client&#39;s IP address, either from the ``X-Forwarded-For`` header</span>
+<span class="sd">             or from ``request.client.host``.</span>
+<span class="sd">    :rtype: str</span>
+
+<span class="sd">    **Example:**</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        &gt;&gt;&gt; ip = get_ip_from_headers(request)</span>
+<span class="sd">        &gt;&gt;&gt; print(ip)</span>
+<span class="sd">        &#39;192.168.1.1&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">forwarded_for</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;X-Forwarded-For&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">forwarded_for</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">forwarded_for</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">host</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">speech2text</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../source/modules.html">speech2text-container</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2024, ClinicianFOCUS.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.0.2</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
