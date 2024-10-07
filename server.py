@@ -10,7 +10,6 @@
 
 from torch._C import NoneType
 from fastapi import FastAPI, File, UploadFile, HTTPException, Security, Request
-from pydantic import BaseModel
 from dotenv import load_dotenv
 from utils import check_api_key, get_api_key, parse_arguments, get_ip_from_headers
 from slowapi import Limiter
