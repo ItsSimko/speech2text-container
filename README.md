@@ -65,7 +65,7 @@ You can set your own API key in the .env. This will be your authentication key w
 # Example request
 
 ```bash
-   curl -X POST "http://localhost:8000/whisperaudio" \
+   curl -X POST "http://localhost:2224/whisperaudio" \
         -H "Authorization: Bearer <api_key>" \
         -F "file=@/path/to/audiofile.wav"
 ```
