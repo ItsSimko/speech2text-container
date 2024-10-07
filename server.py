@@ -114,16 +114,18 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
         "text": "Transcribed text from the audio file."
     }
     """
+
+    # Check if the file is an audio file
+    mime = magic.Magic(mime=True)
+    file_content = await file.read()  # Assuming 'file' is a File object from an upload
+    file_type = mime.from_buffer(file_content)
+
+    if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
+        logging.warning(f"Invalid file type: {file_type}")
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
+
+
     try:
-        # Check if the file is an audio file
-        mime = magic.Magic(mime=True)
-        file_content = await file.read()  # Assuming 'file' is a File object from an upload
-        file_type = mime.from_buffer(file_content)
-
-        if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
-            logging.warning(f"Invalid file type: {file_type}")
-            raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
-
         # Use BytesIO to create an in-memory buffer for the audio file
         audio_buffer = io.BytesIO(file_content)
 
@@ -134,7 +136,7 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
         response_data = {"text": result["text"]}
     except Exception as e:
         logging.error(f"Error processing audio file: {e}")
-        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
+        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}") from e
 
     return response_data
 
