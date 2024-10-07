@@ -21,7 +21,8 @@ RUN apt-get update && apt-get install -y \
 # Install the required packages
 RUN pip install --no-cache-dir -r requirements.txt
 
-
+# Install ffmpeg required for whisper transcription
+RUN apt-get install ffmpeg -y
 
 # Expose the port the app runs on
 EXPOSE 2224
