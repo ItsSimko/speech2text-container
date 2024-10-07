@@ -151,8 +151,9 @@ async def startup_event():
     3. Checks and retrieves the API key for authentication.
     4. Prints the API key for reference.
 
-    The function uses the global variable `MODEL` to store the loaded Whisper model,
-    which can be accessed by other parts of the application.
+    The function uses the global variable `MODEL` to store the loaded Whisper model.
+
+    The function uses the global variable `SESSION_API_KEY` to store the API key.
 
     Returns:
     - None
