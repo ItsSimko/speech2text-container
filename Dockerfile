@@ -4,6 +4,9 @@ FROM python:3.10-slim
 # Set the working directory
 WORKDIR /app
 
+#setup dir we will need and set non root user perms
+RUN mkdir -p /.cache && chown -R 1000:1000 /.cache
+
 # Copy the Speech2text server code into the container
 COPY ./requirements.txt .
 COPY ./server.py .
@@ -17,6 +20,8 @@ RUN apt-get update && apt-get install -y \
 
 # Install the required packages
 RUN pip install --no-cache-dir -r requirements.txt
+
+
 
 # Expose the port the app runs on
 EXPOSE 2224
