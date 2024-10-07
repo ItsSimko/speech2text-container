@@ -23,6 +23,8 @@ extensions = [
     'sphinx.ext.viewcode',
 ]
 
+autodoc_mock_imports = ['torch', 'fastapi']
+
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
