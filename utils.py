@@ -20,32 +20,29 @@ bearer_scheme = HTTPBearer()
 
 def parse_arguments():
     """
-    Parses command-line arguments for the FastAPI server.
+    Parses and returns configuration arguments for the application from enviromentals.
+
+    Environment Variables:
+    - WHISPER_HOST: The hostname or IP address on which the application should listen.
+                    Default: "0.0.0.0"
+    - WHISPER_PORT: The port number on which the application should listen.
+                    Default: 2224
+    - WHISPER_MODEL: The name of the Whisper model to be used.
+                    Default: "medium"
 
     Returns:
-    --------
-    argparse.Namespace
-        An object containing the parsed command-line arguments.
-
-    Example:
-    --------
-    >>> args = parse_arguments()
-    >>> print(args.host, args.port, args.whispermodel)
-    '0.0.0.0' 2224 'medium'
+    - dict: A dictionary containing the parsed configuration values with keys:
+            - "host": The hostname or IP address.
+            - "port": The port number.
+            - "whispermodel": The name of the Whisper model.
     """
-    # Define default values from environment variables
-    default_host = os.getenv("WHISPER_HOST", "0.0.0.0")
-    default_port = int(os.getenv("WHISPER_PORT", 2224))
-    default_whispermodel = os.getenv("WHISPER_MODEL", "medium")
 
-    # Create an argument parser
-    # These overwirte the env, if none passed rely on env/defaults
-    parser = argparse.ArgumentParser(description="FastAPI server for Whisper audio transcription")
-    parser.add_argument("--host", type=str, default=default_host, help="Host address to run the server on")
-    parser.add_argument("--port", type=int, default=default_port, help="Port number to run the server on")
-    parser.add_argument("--whispermodel", type=str, default=default_whispermodel, help="Whisper model to use for transcription")
+    # Define default values from environment variables
+    host = os.getenv("WHISPER_HOST", "0.0.0.0")  # Retrieve the host from the environment, defaulting to "0.0.0.0"
+    port = int(os.getenv("WHISPER_PORT", 2224))  # Retrieve the port from the environment, defaulting to 2224, and convert to integer
+    whispermodel = os.getenv("WHISPER_MODEL", "medium")  # Retrieve the model name from the environment, defaulting to "medium"
     
-    return parser.parse_args()
+    return {"host": host, "port": port, "whispermodel": whispermodel}  # Return the parsed configuration as a dictionary
 
 def generate_api_key():
     """

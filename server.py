@@ -41,14 +41,12 @@ load_dotenv()
 #     ]
 # )
 
-# Check and retrieve the API key
-sessionApiKey = check_api_key()
+# Setup the whispermodel var and api key var
+MODEL = None
+SESSION_API_KEY = None
 
 # Configure logging to display INFO level messages
 logging.basicConfig(level=logging.INFO)
-
-# Initialize the Whisper model as NoneType
-model = NoneType
 
 # set a default rate limit of 5 requests per minute
 limiter = Limiter(key_func=get_ip_from_headers, default_limits=["1/second"])  # Example: Limit to 5 requests per minute
@@ -132,7 +130,7 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
         audio_data, sample_rate = librosa.load(audio_buffer, sr=None)  # sr=None to keep the original sample rate
 
         # Process the file with Whisper using the in-memory buffer
-        result = model.transcribe(audio_data)  # Assuming 'model' can handle file-like objects
+        result = MODEL.transcribe(audio_data)  # Assuming 'model' can handle file-like objects
         response_data = {"text": result["text"]}
     except Exception as e:
         logging.error(f"Error processing audio file: {e}")
@@ -141,18 +139,34 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
     return response_data
 
 # Main entry point for running the Whisper servers
-if __name__ == '__main__':
+
+@app.on_event("startup")
+async def startup_event():
+    """
+    Asynchronous function that runs during the application startup.
+
+    This function performs several initialization tasks:
+    1. Parses the command-line arguments to retrieve configuration settings.
+    2. Loads the Whisper model using the specified model name.
+    3. Checks and retrieves the API key for authentication.
+    4. Prints the API key for reference.
+
+    The function uses the global variable `MODEL` to store the loaded Whisper model,
+    which can be accessed by other parts of the application.
+
+    Returns:
+    - None
+    """
+
     # Parse command-line arguments
     args = parse_arguments()
 
     # Load the Whisper model using the specified model name
-    model = whisper.load_model(args.whispermodel)
+    global MODEL
+    MODEL = whisper.load_model(args["whispermodel"]) 
 
     # Check and retrieve the API key
-    sessionApiKey = check_api_key()
+    SESSION_API_KEY = check_api_key()
 
     # Print the API key for reference
-    print(f"Use this API key for requests with bearer header: {sessionApiKey}")
-
-    # Run the Whiser server application using Uvicorn
-    uvicorn.run(app, host=args.host, port=args.port)
+    print(f"Use this API key for requests with bearer header: {SESSION_API_KEY}")
