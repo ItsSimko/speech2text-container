@@ -1,19 +1,32 @@
-#Deriving the latest base image
-FROM python:3.10
+# Use the official Python image
+FROM python:3.10-slim
 
-# Any working directory can be chosen as per choice like '/' or '/home' etc
-# i have chosen /usr/app/src
-WORKDIR /usr/app/speech2text-container
+# Set the working directory
+WORKDIR /app
 
-#to COPY the remote file at working directory in container
-COPY server.py ./
+#setup dir we will need and set non root user perms
+RUN mkdir -p /.cache && chown -R 1000:1000 /.cache
 
-#to install the dependencies
+# Copy the Speech2text server code into the container
+COPY ./requirements.txt .
 
-RUN pip install -U openai-whisper
+# Install the required packages
+RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 8000
+# Install the required packages for python magic
+RUN apt-get update && apt-get install -y \
+    libmagic1 \
+    && apt-get clean
 
-#CMD instruction should be used to run the software
-#contained by your image, along with any arguments.
-CMD [ "python", "./server.py"]
+
+# Install ffmpeg required for whisper transcription
+RUN apt-get install ffmpeg -y
+
+# copy the rest of the directory into the container
+COPY ./server.py .
+COPY ./utils.py .
+COPY ./.env ./.env
+
+# Expose the port the app runs on
+EXPOSE 2224
+        
