@@ -3,7 +3,7 @@ localhost:2224 {
     reverse_proxy speech-container:2224
 
     request_body {
-        max_size 3GB  # Set the maximum file upload size to 50MB
+        max_size 3000MB  # Set the maximum file upload size to 50MB
     }
 }
 
