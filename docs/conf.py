@@ -23,7 +23,7 @@ extensions = [
     'sphinx.ext.viewcode',
 ]
 
-autodoc_mock_imports = ['torch', 'fastapi']
+autodoc_mock_imports = ['openai-whisper', 'fastapi', 'uvicorn', 'pydantic', 'python-multipart', 'argparse' , 'python-dotenv', 'python-magic', 'slowapi', 'librosa']
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
