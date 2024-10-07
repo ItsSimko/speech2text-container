@@ -4,30 +4,55 @@ Containerized solution for AI speech-to-text that can run locally
 
 # Prerequisites
 
-Docker installed on your system.
-
-# Building the Docker Image
-
-To build the Docker image, run the following command in the directory containing the Dockerfile:
-
-```bash
-    docker build -t speech2text-container .
-```
+Docker and Docker-compose installed on your system.
 
 # Build and run
 
+1. Install
+
 ```bash
-docker-compose up --build
+git clone https://github.com/ClinicianFOCUS/speech2text-container.git
+```
+
+2. Navigate into the directory
+
+```bash
+cd speech2text-container
+```
+
+3. Build and run the docker images using docker-compose
+
+```bash
+docker-compose up -d --build
 ```
 
 # Usage
 
 Send a Request: Send audio data to the exposed endpoint on http://localhost:2224/whisperaudio
-Switches for the Python app:
 
-- --host : Host address to run the server on (Default: 0.0.0.0)
-- --port : Port number to run the server on (Default: 8000)
-- --whispermodel : Whisper model to use for transcription (Default: medium) (https://github.com/openai/whisper?tab=readme-ov-file#available-models-and-languages)
+The following environment variables can be customized to control the behavior of the `speech-container` service:
+
+- `WHISPER_MODEL`: The Whisper model to use (default: `medium`).
+- `WHISPER_PORT`: The port to expose the service (default: `2224`).
+- `WHISPER_HOST`: The host to bind the service (default: `0.0.0.0`).
+- `UVICORN_WORKERS`: Number of Uvicorn workers (default: `1`).
+
+**Windows Example**
+
+```Bash
+$env:WHISPER_MODEL="large"; $env:WHISPER_PORT="2224"; $env:WHISPER_HOST="127.0.0.1"; docker-compose up -d --build
+```
+
+**Linux Example**:
+
+NOTE: Not tested in a linux environment
+
+```bash
+WHISPER_MODEL=large WHISPER_PORT=2224 WHISPER_HOST=127.0.0.1 docker-compose up -d --build
+
+```
+
+This will start the transcription service with the `large` Whisper model on port `2224`, accessible only from `127.0.0.1`.
 
 # Authentication
 
