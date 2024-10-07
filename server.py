@@ -26,19 +26,20 @@ import tempfile
 import magic
 import logging
 import logging
+import io
 
 # Load environment variables from a .env file
 load_dotenv()
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler("/tmp/FreeScribe/Server.log"),
-        logging.StreamHandler()  # This keeps logging in the console as well, if needed
-    ]
-)
+# logging.basicConfig(
+#     level=logging.INFO,
+#     format='%(asctime)s - %(levelname)s - %(message)s',
+#     handlers=[
+#         logging.FileHandler("/tmp/FreeScribe/Server.log"),
+#         logging.StreamHandler()  # This keeps logging in the console as well, if needed
+#     ]
+# )
 
 # Check and retrieve the API key
 sessionApiKey = check_api_key()
@@ -57,10 +58,6 @@ limiter = Limiter(key_func=get_ip_from_headers, default_limits=["1/second"])  # 
 app = FastAPI()
 app.state.limiter = limiter
 
-# Define the response model for transcription
-class TranscriptionResponse(BaseModel):
-    text: str
-
 # Add middleware for rate limiting
 @app.middleware("http")
 async def rate_limit_middleware(request, call_next):
@@ -74,7 +71,7 @@ async def rate_limit_middleware(request, call_next):
 
 
 # Define the endpoint for transcribing audio files
-@app.post("/whisperaudio", response_model=TranscriptionResponse)
+@app.post("/whisperaudio")
 @limiter.limit("1/second")
 async def transcribe_audio(request: Request, file: UploadFile = File(...), api_key: str = Security(get_api_key)):
     """
@@ -117,20 +114,18 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
         "text": "Transcribed text from the audio file."
     }
     """
-    # Check if the file is an audio file
-    mime = magic.Magic(mime=True)
-    file_content = await file.read()
-    file_type = mime.from_buffer(file_content)
-
-    if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
-        logging.warning(f"Invalid file type: {file_type}")
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
-
-    # Save the audio file temporarily
     try:
         with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
-            contents = await file.read()
-            temp_audio_file.write(contents)
+            # Check if the file is an audio file
+            mime = magic.Magic(mime=True)
+            file_content = await file.read()
+            file_type = mime.from_buffer(file_content)
+
+            if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
+                logging.warning(f"Invalid file type: {file_type}")
+                raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
+
+            temp_audio_file.write(file_content)
             temp_file_path = temp_audio_file.name
 
         # Process the file with Whisper
@@ -139,11 +134,6 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
     except Exception as e:
         logging.error(f"Error processing audio file: {e}")
         raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}")
-
-    finally:
-        # Clean up the temporary file
-        if os.path.exists(temp_file_path):
-            os.remove(temp_file_path)
 
     return response_data
 
