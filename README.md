@@ -20,7 +20,7 @@ git clone https://github.com/ClinicianFOCUS/speech2text-container.git
 cd speech2text-container
 ```
 
-- Recommended Step: Set a API key in the .env file. this will be the key used to access the API. If this step is skipped the container wil generate a random key for you upon each start.
+- **Recommended Step:** Set a API key in the .env file. this will be the key used to access the API. If this step is skipped the container wil generate a random key for you upon each start.
 
 3. Build and run the docker images using docker-compose
 
