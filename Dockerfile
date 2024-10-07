@@ -9,6 +9,12 @@ RUN mkdir -p /.cache && chown -R 1000:1000 /.cache
 
 # Copy the Speech2text server code into the container
 COPY ./requirements.txt .
+
+# Install the required packages
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+# copy the rest of the directory into the container
 COPY ./server.py .
 COPY ./utils.py .
 COPY ./.env ./.env
@@ -18,8 +24,6 @@ RUN apt-get update && apt-get install -y \
     libmagic1 \
     && apt-get clean
 
-# Install the required packages
-RUN pip install --no-cache-dir -r requirements.txt
 
 # Install ffmpeg required for whisper transcription
 RUN apt-get install ffmpeg -y
