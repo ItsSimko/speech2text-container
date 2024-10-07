@@ -59,6 +59,22 @@ This will start the transcription service with the `large` Whisper model on port
 On server start up you will receive a api key in the console. This key changes on each start up of the software.
 When making a request to the server include a bearer header with the api key.
 
+# Example request
+
+```bash
+   curl -X POST "http://localhost:8000/whisperaudio" \
+        -H "Authorization: Bearer <api_key>" \
+        -F "file=@/path/to/audiofile.wav"
+```
+
+# Example response
+
+```json
+{
+  "text": "Transcribed text here"
+}
+```
+
 # License
 
 This project is licensed under the AGPL-3.0 License. See the LICENSE file for details.
