@@ -26,7 +26,4 @@ RUN apt-get install ffmpeg -y
 
 # Expose the port the app runs on
 EXPOSE 2224
-
-# Command to run the FastAPI application
-CMD ["python", "server.py", "--port", "2224"]
         
