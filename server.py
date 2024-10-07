@@ -33,15 +33,19 @@ import librosa
 # Load environment variables from a .env file
 load_dotenv()
 
-# Configure logging
-# logging.basicConfig(
-#     level=logging.INFO,
-#     format='%(asctime)s - %(levelname)s - %(message)s',
-#     handlers=[
-#         logging.FileHandler("/tmp/FreeScribe/Server.log"),
-#         logging.StreamHandler()  # This keeps logging in the console as well, if needed
-#     ]
-# )
+# Ensure the directory exists
+log_dir = "/tmp/FreeScribe/"
+os.makedirs(log_dir, exist_ok=True)
+
+# Set up logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(os.path.join(log_dir, "Server.log")),
+        logging.StreamHandler()  # Keeps logging in the console as well, if needed
+    ]
+)
 
 # Setup the whispermodel var and api key var
 MODEL = None
