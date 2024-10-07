@@ -27,6 +27,7 @@ autodoc_mock_imports = ['torch', 'openai-whisper', 'fastapi', 'uvicorn', 'pydant
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+html_theme = "sphinx_rtd_theme"
 
 
 
