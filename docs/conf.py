@@ -10,6 +10,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))  # Point to the directory containing `Server.py` and `utils.py`
 
+
 project = 'speech2text'
 copyright = '2024, ClinicianFOCUS'
 author = 'ClinicianFOCUS'
@@ -23,16 +24,15 @@ extensions = [
     'sphinx.ext.viewcode',
 ]
 
-autodoc_mock_imports = ['torch', 'openai-whisper', 'fastapi', 'uvicorn', 'pydantic', 'python-multipart', 'argparse' , 'python-dotenv', 'python-magic', 'slowapi', 'librosa', 'dotenv', 'starlette']
+# autodoc_typehints = 'none'
+# autodoc_mock_imports = ['torch', 'openai-whisper', 'fastapi', 'uvicorn', 'pydantic', 'python-multipart', 'argparse' , 'python-dotenv', 'python-magic', 'slowapi', 'librosa', 'dotenv', 'starlette']
+
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-html_theme = "sphinx_rtd_theme"
-
-
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
