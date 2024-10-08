@@ -40,11 +40,11 @@ os.makedirs(log_dir, exist_ok=True)
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.FileHandler(os.path.join(log_dir, "Server.log")),
-        logging.StreamHandler()  # Keeps logging in the console as well, if needed
-    ]
+        logging.StreamHandler(),  # Keeps logging in the console as well, if needed
+    ],
 )
 
 # Setup the whispermodel var and api key var
@@ -55,12 +55,15 @@ SESSION_API_KEY = None
 logging.basicConfig(level=logging.INFO)
 
 # set a default rate limit of 5 requests per minute
-limiter = Limiter(key_func=get_ip_from_headers, default_limits=["1/second"])  # Example: Limit to 5 requests per minute
+limiter = Limiter(
+    key_func=get_ip_from_headers, default_limits=["1/second"]
+)  # Example: Limit to 5 requests per minute
 
 
 # Create a FastAPI application instance
 app = FastAPI()
 app.state.limiter = limiter
+
 
 # Add middleware for rate limiting
 @app.middleware("http")
@@ -101,14 +104,17 @@ async def rate_limit_middleware(request, call_next):
         return response
     except RateLimitExceeded as e:
         logging.warning(f"Rate limit exceeded: {e}")
-        return PlainTextResponse("Rate limit exceeded. Try again later.", status_code=429)
-    
+        return PlainTextResponse(
+            "Rate limit exceeded. Try again later.", status_code=429
+        )
 
 
 # Define the endpoint for transcribing audio files
 @app.post("/whisperaudio")
 @limiter.limit("1/second")
-async def transcribe_audio(request: Request, file: UploadFile = File(...), api_key: str = Security(get_api_key)):
+async def transcribe_audio(
+    request: Request, file: UploadFile = File(...), api_key: str = Security(get_api_key)
+):
     """
     Transcribes an uploaded audio file using the Whisper model.
 
@@ -122,7 +128,7 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
     :type file: fastapi.UploadFile
     :param api_key: The API key for authentication. Retrieved using the `get_api_key` function.
     :type api_key: str
-    
+
     :return: JSON response containing the transcribed text.
     :rtype: dict
 
@@ -158,25 +164,35 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...), api_k
 
     if file_type not in ["audio/mpeg", "audio/wav", "audio/x-wav"]:
         logging.warning(f"Invalid file type: {file_type}")
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an MP3 or WAV file.")
-
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid file type. Please upload an MP3 or WAV file.",
+        )
 
     try:
         # Use BytesIO to create an in-memory buffer for the audio file
         audio_buffer = io.BytesIO(file_content)
 
-        audio_data, sample_rate = librosa.load(audio_buffer, sr=None)  # sr=None to keep the original sample rate
+        audio_data, sample_rate = librosa.load(
+            audio_buffer, sr=None
+        )  # sr=None to keep the original sample rate
 
         # Process the file with Whisper using the in-memory buffer
-        result = MODEL.transcribe(audio_data)  # Assuming 'model' can handle file-like objects
+        result = MODEL.transcribe(
+            audio_data
+        )  # Assuming 'model' can handle file-like objects
         response_data = {"text": result["text"]}
     except Exception as e:
         logging.error(f"Error processing audio file: {e}")
-        raise HTTPException(status_code=500, detail=f"Error processing audio file: {e}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Error processing audio file: {e}"
+        ) from e
 
     return response_data
 
+
 # Main entry point for running the Whisper servers
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -202,11 +218,12 @@ async def startup_event():
 
     # Load the Whisper model using the specified model name
     global MODEL
-    MODEL = whisper.load_model(args["whispermodel"]) 
+    MODEL = whisper.load_model(args["whispermodel"])
 
     # Check and retrieve the API key\
     global SESSION_API_KEY
     SESSION_API_KEY = check_api_key()
 
     # Print the API key for reference
-    print(f"Use this API key for requests with bearer header: {SESSION_API_KEY}")
+    print(
+        f"Use this API key for requests with bearer header: {SESSION_API_KEY}")
