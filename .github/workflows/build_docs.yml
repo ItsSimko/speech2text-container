@@ -36,6 +36,10 @@ jobs:
           cd ./docs
           sphinx-build -b html ./ ./_build/html
 
+      - name: List directory contents for debugging
+        run: |
+          ls -la ./docs/_build/html
+
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0
 
@@ -43,6 +47,14 @@ jobs:
       - name: Zip artifact
         run: |
           tar -czvf html.tar.gz ./docs/_build/html
+
+      - name: List directory contents for debugging 2.1
+        run: |
+          ls -la ./
+
+      - name: List directory contents for debugging 2
+        run: |
+          ls -la ./docs/_build/html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@0252fc4ba7626f0298f0cf00902a25c6afc77fa8 # v3.0
