@@ -69,7 +69,9 @@ app.state.limiter = limiter
 @app.middleware("http")
 async def rate_limit_middleware(request, call_next):
     """
-    This function adds middleware to an application for rate limiting HTTP requests. It processes incoming requests and either forwards them for handling or returns a `429 Too Many Requests` response if the rate limit is exceeded.
+    This function adds middleware to an application for rate limiting HTTP requests. 
+    It processes incoming requests and either forwards them for handling or returns a `429 Too Many Requests` 
+    response if the rate limit is exceeded.
 
     Example:
     --------
