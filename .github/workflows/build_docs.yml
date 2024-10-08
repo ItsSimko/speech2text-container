@@ -34,9 +34,8 @@ jobs:
         # Build the Sphinx documentation
       - name: Build Sphinx Documentation
         run: |
-          cd docs  # Replace with your docs folder if necessary
-          ls
-          make html  # Assumes you have a Makefile; adjust if using other build commands
+          cd ./docs
+          sphinx-build -b html ./ ./_build/html
 
       - name: Checkout
         uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.2.1
