@@ -43,11 +43,17 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0
 
+      # Create a tarball of the built documentation
+      - name: Create artifact
+        run: |
+          cd docs/_build
+          tar -czvf html.tar.gz html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@0252fc4ba7626f0298f0cf00902a25c6afc77fa8 # v3.0
         with:
           # Upload entire repository
-          path: "./_build/html"
+          path: "./_build/html.tar.gz"
 
       - name: Deploy to GitHub Pages
         id: deployment
