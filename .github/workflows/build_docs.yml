@@ -46,7 +46,9 @@ jobs:
       # Create a tarball of the built documentation
       - name: Zip artifact
         run: |
-          cd docs/_build
+          ls
+          ls ./docs/
+          cd ./docs/_build
           tar -czvf html.tar.gz html
 
       - name: Upload artifact
