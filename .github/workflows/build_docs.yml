@@ -35,6 +35,7 @@ jobs:
       - name: Build Sphinx Documentation
         run: |
           cd docs  # Replace with your docs folder if necessary
+          ls
           make html  # Assumes you have a Makefile; adjust if using other build commands
 
       - name: Checkout
@@ -46,7 +47,6 @@ jobs:
       # Create a tarball of the built documentation
       - name: Zip artifact
         run: |
-          ls
           ls ./docs/
           cd ./docs/_build
           tar -czvf html.tar.gz html
