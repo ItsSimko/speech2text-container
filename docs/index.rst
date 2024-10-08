@@ -127,7 +127,7 @@ This endpoint accepts an audio file (MP3 or WAV) and transcribes it using the Wh
 
 .. code-block:: bash
 
-   curl -X POST "http://localhost:8000/whisperaudio" \
+   curl -X POST "http://localhost:2224/whisperaudio" \
         -H "Authorization: Bearer <api_key>" \
         -F "file=@/path/to/audiofile.wav"
 
