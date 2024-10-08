@@ -5,6 +5,10 @@ on:
     branches:
       - main # Replace 'main' with your default branch if needed
 
+permissions:
+  id-token: write # Grant the necessary permissions for the deploy-pages action
+  contents: write # Ensure content write access for deployment
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -65,3 +69,5 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
