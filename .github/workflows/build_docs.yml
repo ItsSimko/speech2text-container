@@ -51,8 +51,12 @@ jobs:
       # Create a tarball of the built documentation
       - name: Zip artifact
         run: |
-          cd ./docs/_build
-          tar -czvf html.tar.gz html
+          tar -czvf html.tar.gz ./docs/_build/html
+
+      # debug the current directory structure
+      - name: Debug 2.0
+        run: |
+          ls -l
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@0252fc4ba7626f0298f0cf00902a25c6afc77fa8 # v3.0
