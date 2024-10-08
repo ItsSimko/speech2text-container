@@ -48,6 +48,18 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0
 
+      - name: Debug 2.0
+        run: |
+          ls -l
+
+      - name: Debug 2.1
+        run: |
+          ls -l ./docs
+
+      - name: Debug 2.2
+        run: |
+          ls -l ./docs/_build
+
       # Create a tarball of the built documentation
       - name: Zip artifact
         run: |
