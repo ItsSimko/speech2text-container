@@ -8,6 +8,7 @@ on:
 permissions:
   id-token: write # Grant the necessary permissions for the deploy-pages action
   contents: write # Ensure content write access for deployment
+  pages: write # Allow deployment to GitHub Page
 
 jobs:
   build:
