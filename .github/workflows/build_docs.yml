@@ -36,8 +36,11 @@ jobs:
         run: |
           cd ./docs
           sphinx-build -b html ./ ./_build/html
-          ls ./_build/html
-          ls -a
+
+        # debug the current directory structure
+      - name: Debug
+        run: |
+          ls -l ./docs/_build/html
 
       - name: Checkout
         uses: actions/checkout@1e31de5234b9f8995739874a8ce0492dc87873e2 # v4.2.1
@@ -48,7 +51,6 @@ jobs:
       # Create a tarball of the built documentation
       - name: Zip artifact
         run: |
-          ls ./docs/
           cd ./docs/_build
           tar -czvf html.tar.gz html
 
